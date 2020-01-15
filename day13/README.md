@@ -18,6 +18,6 @@ that the paddle actually needed to contact the ball. I thought about manual cont
 it programatically. So, the joystick input is now based on where the ball is and calculates where the ball will touch the baseline. 
 The inputs are calculated to move the paddle to meet the joystick.
 
-* Display Output *
+#### Display Output ####
 I update the board display using a screen refresh then printing the whole thing again. It flickers and takes ages to run. 
 Set self.display = 1  to dispay the board or 0 to hide it - which is much faster.
