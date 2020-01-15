@@ -1,2 +1,6 @@
-# AdventofCode2019
-Some solutions to the challenges in python. This is not pretty.
+# Advent of Code 2019 
+## https://adventofcode.com/2019 ##
+
+A smattering of solutions in python to the challenges posed this year.
+
+
