@@ -25,3 +25,6 @@ know it's inefficient (and hopefully the last time we will use Z because we're w
 The big difficulty was in managing the remainders. In part1_failed.py I didn't use levels - I did efficient, then ineffecient expansions.
 I saved the base units (level 1) for last. It worked for all the examples but not the actual input. I tried forgetting about remainders but
 that didn't help. Eventually I thought of using levels to try to minimise the remainders generated and that worked.
+
+## Part 2 ##
+Use a binary search - repeatedly halving the search space until find the result. Each iteration we try a value of fuel and see how many ore are required. Keep iterating until the highest value of fuel is found that required <= 1 trillion (1e12) ore.
