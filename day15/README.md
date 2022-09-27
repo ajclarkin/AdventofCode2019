@@ -23,3 +23,10 @@ https://www.wikiwand.com/en/Maze_solving_algorithm#/Tr%C3%A9maux's_algorithm
     * Explored dead end will have history of 2 (set to 1 on the way out and 2 on the way back).
 * Make the move identified.
 * If moving takes us to the oxygen port then break out of the loop, otherwise repeat.
+
+
+# 2022 Status Note
+This doesn't work. It hasn't been touched since February 2020. There was a bit of a pandemic and I had to abandon this. It stil annoys me that it's not finished.
+What this solution tries is a depth-first search. I believe I need to use a breadth-first search. I don't know anything about graph theory - it's not exactly something
+that I use in my daily work. Perhaps I'll get time to come back to this - I hope so. I've deliberately not watched the solution videos on youtube - but there are 
+plenty. I believe this is the dungeon master problem.
