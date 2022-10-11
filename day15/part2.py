@@ -6,6 +6,7 @@ from mod_intcode import Intcode
 
 
 moves = [1, 2, 3, 4]
+reverse = {0:0, 1: 2, 2: 1, 3: 4, 4: 3}
 paths = []
 
 intcode = Intcode()
@@ -34,10 +35,10 @@ paths.append(valid)
 
 
 
-valid = [1]     # for the purposes of the while loop
-while len(valid) > 0:
+while len(paths) > 0:
     # Get the oldest path and follow all it's moves
     path = paths.pop(0)
+    path_length = len(path)
 
     for p in path:
         intcode.RunIntcode(p)
@@ -70,14 +71,11 @@ while len(valid) > 0:
     reverse_path.reverse()
     for p in reverse_path:
         intcode.RunIntcode(reverse[p])
-        x = x + dx[reverse[p]]
-        y = y + dy[reverse[p]]
-
 
 
 
 
 print(f'Reached the limit of the area.')
-print(f'Moves made: {len(paths[-1])}')
+print(f'Moves made: {path_length}')
 
-
+# 412 is too high
