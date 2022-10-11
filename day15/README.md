@@ -30,3 +30,16 @@ This doesn't work. It hasn't been touched since February 2020. There was a bit o
 What this solution tries is a depth-first search. I believe I need to use a breadth-first search. I don't know anything about graph theory - it's not exactly something
 that I use in my daily work. Perhaps I'll get time to come back to this - I hope so. I've deliberately not watched the solution videos on youtube - but there are 
 plenty. I believe this is the dungeon master problem.
+
+## Part 1 - SOLVED ##
+October 11, 2022. I have finished part 1 and I am sooooo happy.
+Breadth-first search, inefficient because I go back to the origin each time and then follow each path in turn.
+
+*Solution*
+- Use a list of lists called paths to save all the possible paths from the origin.
+- The first entry is created outside of a loop to populate paths and so that we know what the first move is
+- Now loop until the return code from a move is 2, that is, the oxygen is found.
+- On each iteration remove the oldest path and follow it to the end.
+- Find all the valid moves at the end of that path and for each valid move save the path followed with that move appended to paths.
+- (So, if the path followed had 10 steps and then there were 3 valid moves at the end of the path then 3 new paths will be saved to the end of paths list.)
+- Once the oxygen is found count the length of the latest list which will be the number of steps to it.
