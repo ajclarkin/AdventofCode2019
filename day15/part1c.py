@@ -18,28 +18,6 @@ paths = []
 
 
 
-
-def GetPossibleDirections(prev):
-    moves = [1, 2, 3, 4]
-    reverse = {0:0, 1: 2, 2: 1, 3: 4, 4: 3}
-
-    gen = (i for i in moves if i != reverse[prev])
-    options = list(gen)     # need this listcomp aboves returns a generator
-
-    for poss in options:
-        locationtype = intcode.RunIntcode(poss)
-        if locationtype == 0:
-            options.remove(poss)
-        if locationtype == 1:
-            intcode.RunIntcode(reverse[poss])
-        else:
-            ## WHAT TO DO WHEN OXYGEN FOUND
-            pass
-
-        
-
-
-
 # Initial setup - instantiate the objects
 intcode = Intcode()
 locationtype = 0
@@ -51,42 +29,64 @@ options = moves.copy()
 valid = []
 for poss in options:
         locationtype = intcode.RunIntcode(poss)
-        print(f'Tried option: {poss}\tResult: {locationtype}\n')
         if locationtype == 1:
             intcode.RunIntcode(reverse[poss])
             valid.append(poss)
 
 paths.append(valid)
-print(f'Initial path: {paths}')
 
 
 
-# # while locationtype != 2:
-# for lcv in range(5):
-#     # Get the oldest path and follow all it's moves
-#     path = paths.pop(0)
-#     for p in path:
-#         intcode.RunIntcode(p)
 
-#     # Now find what moves are possible from the last square reached in the path
-#     gen = (i for i in moves if i != reverse[p])
-#     options = list(gen)     # need this listcomp aboves returns a generator
+# while locationtype != 2:
+for lcv in range(500):
+    # Get the oldest path and follow all it's moves
+    path = paths.pop(0)
+    print(f'Starting loop {lcv}\tPosition: {x}, {y}')
+    print(f'Path to follow: {path}')
+    for p in path:
+        intcode.RunIntcode(p)
+        x = x + dx[p]
+        y = y + dy[p]
+        print(f'Move: {p}\tPosition: {x}, {y}')
 
-#     for poss in options:
-#         locationtype = intcode.RunIntcode(poss)
-#         if locationtype == 0:
-#             options.remove(poss)
-#         if locationtype == 1:
-#             intcode.RunIntcode(reverse[poss])
+    # Now find what moves are possible from the last square reached in the path
+    gen = (i for i in moves if i != reverse[p])
+    options = list(gen)     # need this listcomp aboves returns a generator
+    print(f'This loop options are: {options}')
 
-#     # options now contains all the possible moves.
-#     # Each one of these should be appended to the original path and stuck on the end of paths as a viable path
+    valid = []
+    for poss in options:
+        locationtype = intcode.RunIntcode(poss)
 
-#     for o in options:
-#         paths.append(path)
-#         paths[-1].append(o)
+        if locationtype != 0:
+            intcode.RunIntcode(reverse[poss])
+            valid.append(poss)
 
-# print(f'Loop {lcv}\nPaths: {paths}\n\n\n')
+    # valid now contains all the possible moves.
+    # Each one of these should be appended to the original path and stuck on the end of paths as a viable path
+
+    reverse_path = path.copy()
+
+    for v in valid:
+        new_path = path.copy()
+        new_path.append(v)
+        paths.append(new_path)
+
+
+    print(f'Valid moves from the box at the end of the path: {valid}')
+    print(f'Paths: {paths}\n')
+
+    print(f'Now to backtrack\n')
+    reverse_path.reverse()
+    for p in reverse_path:
+        intcode.RunIntcode(reverse[p])
+        x = x + dx[reverse[p]]
+        y = y + dy[reverse[p]]
+        print(f'Position: {x}, {y}')
+
+    print(f'Enf of loop {lcv}\t\tPosition: {x} {y}\n\n\n')
+
 
 
 
