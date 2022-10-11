@@ -6,13 +6,8 @@ from mod_intcode import Intcode
 
 
 moves = [1, 2, 3, 4]
-x, y = 0, 0
-dx = {1: 0, 2: 0, 3: -1, 4: 1}
-dy = {1: -1, 2: 1, 3: 0, 4: 0}
 reverse = {0:0, 1: 2, 2: 1, 3: 4, 4: 3}
-
 paths = []
-
 intcode = Intcode()
 locationtype = 0
 
@@ -45,18 +40,13 @@ paths.append(valid)
 while locationtype != 2:
     # Get the oldest path and follow all it's moves
     path = paths.pop(0)
-    # print(f'Starting loop {lcv}\tPosition: {x}, {y}')
-    # print(f'Path to follow: {path}')
     for p in path:
         intcode.RunIntcode(p)
-        x = x + dx[p]
-        y = y + dy[p]
-        # print(f'Move: {p}\tPosition: {x}, {y}')
+
 
     # Now find what moves are possible from the last square reached in the path
     gen = (i for i in moves if i != reverse[p])
     options = list(gen)     # need this listcomp aboves returns a generator
-    # print(f'This loop options are: {options}')
 
     valid = []
     for poss in options:
@@ -77,18 +67,9 @@ while locationtype != 2:
         paths.append(new_path)
 
 
-    # print(f'Valid moves from the box at the end of the path: {valid}')
-    # print(f'Paths: {paths}\n')
-
-    # print(f'Now to backtrack\n')
     reverse_path.reverse()
     for p in reverse_path:
         intcode.RunIntcode(reverse[p])
-        x = x + dx[reverse[p]]
-        y = y + dy[reverse[p]]
-    #     print(f'Position: {x}, {y}')
-
-    # print(f'Enf of loop {lcv}\t\tPosition: {x} {y}\n\n\n')
 
 
 print(f'Reached the oxygen supply')
