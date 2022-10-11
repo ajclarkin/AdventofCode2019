@@ -1,120 +1,78 @@
-# This incompletely discovers a path
-# It also stops at a certain path length and so that's hard-coded into it
+# October 2022
+# This thing has taunted me for years. I'm doing a re-write.
+
 
 from mod_intcode import Intcode
 
-x, y = 0, 0
 
-
-
-
-class GridMap:
-
-    dx = {1: 0, 2: 0, 3: -1, 4: 1}
-    dy = {1: -1, 2: 1, 3: 0, 4: 0}
-    reverse = {0:0, 1: 2, 2: 1, 3: 4, 4: 3}
-
-    def __init__(self):
-        self.x, self.y = 0, 0
-        self.map = dict()
-        self.moves = [x for x in range(1,5)]
-        self.prev = 0
-
-
-    def GetPossibleDirections(self):
-        # Returns a list of directions to move, excluding previous move
-        gen = (i for i in self.moves if i != self.reverse[self.prev])
-        options = list(gen)
-
-        for poss in options:
-            if self.GetPositionInfo(self.x + self.dx[poss], self.y + self.dy[poss]) == 0:
-                options.remove(poss)
-
-        # Append the previous move as the final option - will only be taken if nothing else works
-        # Note we reverse it - ig the last move was to move north then moving sound would take us to previous location
-        options.append(self.reverse[self.prev])
-        return options
-
-
-    def SavePositionInfo(self, direction, result):
-        self.map[(self.x + self.dx[direction], self.y + self.dy[direction])] = result
-
-
-    def GetPositionInfo(self, x, y):
-        # Get the info for any x and y position
-        if (x, y) in self.map:
-            return self.map[(x, y)]
-        else:
-            return None
-
-
-    def Move(self, direction):
-        self.x = self.x + self.dx[direction]
-        self.y = self.y + self.dy[direction]
-        self.prev = direction
-
-
-    def PrintGrid(self):
-        x_min, x_max = 0, 0
-        y_min, y_max = 0, 0
-
-        for x, y in self.map.keys():
-            if x < x_min: x_min = x
-            if x > x_max: x_max = x
-            if y < y_min: y_min = y
-            if y > y_max: y_max = y
-
-        # Create lists for each of these - they need to start at 0 so correct for this
-        x_offset = 0 - x_min
-        y_offset = 0 - y_min
-        x_range = x_max - x_min
-        y_range = y_max - y_min
-
-        # Initialised rows with dots
-        gridlist = [['o' for _ in range(x_range +1)] for _ in range(y_range +1)]
-
-        for x, y in self.map:
-            if self.map[(x, y)] == 0: gridlist[y + y_offset][x + x_offset] = '#'
-            if self.map[(x, y)] == 1: gridlist[y + y_offset][x + x_offset] = '.'
-            if self.map[(x, y)] == 2: gridlist[y + y_offset][x + x_offset] = '2'
-
-        gridlist[y_offset][x_offset] = '@'
-
-        print(f'X: {x_min} to {x_max}\nY: {y_min} to {y_max}')
-
-        print('\n'.join(''.join(row) for row in gridlist))
-        print('\nPath represented by . and unexplored squares by o. Origin is @')
-
-
-# Initial setup - instantiate the objects
+moves = [1, 2, 3, 4]
+reverse = {0:0, 1: 2, 2: 1, 3: 4, 4: 3}
+paths = []
 intcode = Intcode()
-result = intcode.RunIntcode()
-grid = GridMap()
+locationtype = 0
+
+# COMMANDS & RESPONSES
+# Only four movement commands are understood: north (1), south (2), west (3), and east (4).
+# Responses: 0 - wall / 1 - moved 1 step in that direction / 2 - moved 1 step and found destination
 
 
-while result != '' and result != 2:
-    dirs = grid.GetPossibleDirections()
 
-    for d in dirs:
-        # print(f'Try direction {d}')
-        result = intcode.RunIntcode(d)
-        # print(f'Outcome: {result}')
-        grid.SavePositionInfo(d, result)
 
-        if result != 0:
-            grid.Move(d)
+# For the first move there is no previous move to reverse and nothing in the paths list
+# so first move is outside the main loop to get these populated.
 
-            if result == 2:
-                print(f'Found the 2 spot: {grid.x}, {grid.y}')
+options = moves.copy()
+valid = []
+for poss in options:
+        locationtype = intcode.RunIntcode(poss)
+        if locationtype == 1:
+            intcode.RunIntcode(reverse[poss])
+            valid.append(poss)
 
-            break
+paths.append(valid)
 
-    # print(grid.map)
-    print(f'{grid.x}, {grid.y}\t {len(grid.map)}')
 
-    if len(grid.map) == 206:
-        print(grid.map)
-        break
+# Now we're going to remove and follow the oldest path from the paths list.
+# # Follow it to it's end then at the end test each direction.
+# Each valid direction will have a new path saved to the end of the list - the path we followed plus the valid new direction.
+# The we'll backtrack all the way to the origin. (Yes - inefficient but I want this solved.)
 
-print(f'Found the 2 spot: {grid.x}, {grid.y}')
-grid.PrintGrid()
+while locationtype != 2:
+    # Get the oldest path and follow all it's moves
+    path = paths.pop(0)
+    for p in path:
+        intcode.RunIntcode(p)
+
+
+    # Now find what moves are possible from the last square reached in the path
+    gen = (i for i in moves if i != reverse[p])
+    options = list(gen)     # need this listcomp aboves returns a generator
+
+    valid = []
+    for poss in options:
+        locationtype = intcode.RunIntcode(poss)
+
+        if locationtype != 0:
+            intcode.RunIntcode(reverse[poss])
+            valid.append(poss)
+
+    # valid now contains all the possible moves.
+    # Each one of these should be appended to the original path and stuck on the end of paths as a viable path
+
+    reverse_path = path.copy()
+
+    for v in valid:
+        new_path = path.copy()
+        new_path.append(v)
+        paths.append(new_path)
+
+
+    reverse_path.reverse()
+    for p in reverse_path:
+        intcode.RunIntcode(reverse[p])
+
+
+print(f'Reached the oxygen supply')
+print(f'Moves made: {len(paths[-1])}')
+
+
