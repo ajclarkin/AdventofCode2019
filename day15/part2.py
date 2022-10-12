@@ -6,11 +6,19 @@ from mod_intcode import Intcode
 
 
 moves = [1, 2, 3, 4]
+
+
 reverse = {0:0, 1: 2, 2: 1, 3: 4, 4: 3}
 paths = []
 
 intcode = Intcode()
 locationtype = 0
+
+# Let's make a map
+x, y = 0,0
+dx = {1: 0, 2: 0, 3: -1, 4: 1}
+dy = {1: -1, 2: 1, 3: 0, 4: 0}
+map = dict()
 
 
 # COMMANDS & RESPONSES
@@ -30,6 +38,8 @@ for poss in options:
         if locationtype == 1:
             intcode.RunIntcode(reverse[poss])
             valid.append(poss)
+
+        map[(x + dx[poss], y + dy[poss])] = locationtype
 
 paths.append(valid)
 
@@ -56,6 +66,8 @@ while len(paths) > 0:
         if locationtype != 0:
             intcode.RunIntcode(reverse[poss])
             valid.append(poss)
+
+        map[(x + dx[poss], y + dy[poss])] = locationtype
 
     # valid now contains all the possible moves.
     # Each one of these should be appended to the original path and stuck on the end of paths as a viable path
