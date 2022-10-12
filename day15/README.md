@@ -43,3 +43,20 @@ Breadth-first search, inefficient because I go back to the origin each time and 
 - Find all the valid moves at the end of that path and for each valid move save the path followed with that move appended to paths.
 - (So, if the path followed had 10 steps and then there were 3 valid moves at the end of the path then 3 new paths will be saved to the end of paths list.)
 - Once the oxygen is found count the length of the latest list which will be the number of steps to it.
+
+
+## Part 2 ##
+For this the question is what is the longest path that the oxygen has to flow.
+
+Obvisouly I made a bit of a mess of this initially and measured the longest path from the starting point of the repair droid, not the oxygen supply.
+I was about to put the computer down for the night when I realised and then it was a 5 minute job.
+
+Solution:
+ - Use part 1 solution and save the path which leads to the oxygen.
+ - Save that path then clear the list of paths.
+ - Copy and paste the code and run it again, this time looping until there are no paths left - that is, we've found the final and longest path.
+ - Count the steps.
+
+ Because I had written part 1 to do all the pathfinding the code was reusable.
+
+ And with that, the 2 year 8 month oxygen supply challenge was complete.
