@@ -74,7 +74,7 @@ def LimitedRowExpansion(input, rowno, halfsum, additional):
             for j in range(len(input)):
                 row_sum = row_sum + (input[j] * base[b])
                 b = b + 1 if b < len(base)-1 else 0
-
+        row_sum = row_sum * -1
 
     for i in range(additional):
         for j in range(len(input)):
@@ -90,7 +90,7 @@ def LimitedRowExpansion(input, rowno, halfsum, additional):
 def TryMain(input):
     answer = []
 
-    print(f'Answer: {answer}\ninput: {input}')
+    # print(f'Answer: {answer}\ninput: {input}')
 
     for rowno in range(1, 651):
         b = 1
@@ -154,3 +154,4 @@ final_answer = FindFinalValue(input)
 print(f'The final solution is: {final_answer}')
 
 # The answer is lower than [6, 8, 3, 6, 4, 5, 3, 3]
+# Also lower than 6, 2, 7, 2, 2, 5, 1, 5
